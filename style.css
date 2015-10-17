@@ -1,0 +1,10 @@
+body {
+    padding: 0px;
+    border: 0px;
+    margin: 0px;
+    overflow: hidden;
+    position: fixed;
+    z-index: 1;
+    top: 0px;
+    left: 0px;
+}
