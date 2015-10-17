@@ -10,12 +10,12 @@ navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mo
 require(["game/Game", 
     "pixi"], 
 function(Game, PIXI) {
-    var stage = new PIXI.Stage(0x6699FF);
+    var root = new PIXI.Container(0x6699FF);
 
     var pixiRenderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight);
     document.body.appendChild(pixiRenderer.view);
 
-    var game = new Game(stage);
+    var game = new Game(root);
 
     var lastTime = Date.now();
 
@@ -36,7 +36,7 @@ function(Game, PIXI) {
         game.render();
 
         // render the stage
-        pixiRenderer.render(stage);
+        pixiRenderer.render(root);
 
         lastTime = now;
     }
