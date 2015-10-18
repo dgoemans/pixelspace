@@ -15,7 +15,7 @@ function(Game, PIXI) {
     var pixiRenderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight);
     document.body.appendChild(pixiRenderer.view);
 
-    var game = new Game(root);
+    var game = new Game(root, pixiRenderer);
 
     var lastTime = Date.now();
 

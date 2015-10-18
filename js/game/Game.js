@@ -1,13 +1,16 @@
 define(["pixi"], 
 function(PIXI)
 {
-    function Game(root)
+    function Game(root, renderer)
     {
         this.totalElapsed = 0;
         this.container = new PIXI.Container();
         root.addChild(this.container);
+        
         this.sprites = [];
         var texture = PIXI.Texture.fromImage('/assets/white_32.png');
+        
+        this.mouse = renderer.plugins.interaction.mouse ? renderer.plugins.interaction.mouse.global : null;
         
         var size = 32;
         
@@ -43,16 +46,26 @@ function(PIXI)
             var timeFactor = Math.sin(this.totalElapsed);
             
             var blueFuzz = Math.random()*0.30 * yFactor + 0.5;
+            var mouseFactor = 0;
             
-            sprite.tint = this.toHex(xResult, yFactor, 0.5);
+            if(this.mouse)
+            {
+                var radius = window.innerHeight/3;
+                var dist = Math.sqrt( (this.mouse.x - sprite.position.x)*(this.mouse.x - sprite.position.x) + (this.mouse.y - sprite.position.y)*(this.mouse.y - sprite.position.y) );
+                dist = (radius - dist)/radius;
+                dist = Math.min(Math.max(0,dist),1);
+                
+                mouseFactor = dist * 0.25;
+                
+                //sprite.scale.x = 0.95 - dist * 0.1;
+                //sprite.scale.y = 0.95 - dist * 0.1;
+            }
+            
+            sprite.tint = this.toHex(xResult + mouseFactor, yFactor + mouseFactor, 0.5 + mouseFactor);
             
             if(Math.random()<0.008)
                 sprite.alpha = 0.9 + 0.1 * Math.random();
                 
-            /*var scale = Math.sin(this.totalElapsed * 0.005 + xFactor * 1.0)*0.1 + 0.85;
-            sprite.scale.x = scale;
-            sprite.scale.y = scale;*/
-
         }, this)
     };
     
@@ -64,9 +77,9 @@ function(PIXI)
     
     Game.prototype.toHex = function(r,g,b)
     {
-        var red = Math.floor(255*r);
-        var green = Math.floor(255*g);
-        var blue = Math.floor(255*b);
+        var red = Math.min(255,Math.floor(255*r));
+        var green = Math.min(255,Math.floor(255*g));
+        var blue = Math.min(255,Math.floor(255*b));
         
         return ((red << 16) + (green << 8) + blue);
     }
