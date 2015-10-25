@@ -12,7 +12,10 @@ function(PIXI)
         
         this.mouse = renderer.plugins.interaction.mouse ? renderer.plugins.interaction.mouse.global : null;
         
-        var size = 32;
+        var minSize = Math.min(window.innerHeight,window.innerWidth);
+        
+        var size = Math.ceil(minSize/25);
+        var scale = 0.95 * size/32;
         
         for(var y = 0; y<=window.innerHeight;y+=size)
         {
@@ -24,7 +27,7 @@ function(PIXI)
                 sprite.position.x = x + size/4;
                 sprite.position.y = y + size/4;
                 sprite.tint = Math.random() * 0xffffff;
-                sprite.scale.set(0.95,0.95);
+                sprite.scale.set(scale,scale);
                 sprite.alpha = 0.9 + 0.1 * Math.random();
                 
                 this.sprites.push(sprite);
@@ -56,9 +59,6 @@ function(PIXI)
                 dist = Math.min(Math.max(0,dist),1);
                 
                 mouseFactor = dist * 0.25;
-                
-                //sprite.scale.x = 0.95 - dist * 0.1;
-                //sprite.scale.y = 0.95 - dist * 0.1;
             }
             
             sprite.tint = this.toHex(xResult + mouseFactor, yFactor + mouseFactor, 0.5 + mouseFactor);
