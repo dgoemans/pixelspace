@@ -82,7 +82,7 @@ function(PIXI)
         var blue = Math.min(255,Math.floor(255*b));
         
         return ((red << 16) + (green << 8) + blue);
-    }
+    };
     
     
     
