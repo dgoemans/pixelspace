@@ -1,16 +1,16 @@
-define(["pixi"], 
-function(PIXI)
+define(["Pixi", "Three"],
+function(Pixi, Three)
 {
-    function Game(root, renderer)
+    function Game(root, pixiRenderer, threeScene, threeCamera)
     {
         this.totalElapsed = 0;
-        this.container = new PIXI.Container();
+        this.container = new Pixi.Container();
         root.addChild(this.container);
         
         this.sprites = [];
-        var texture = PIXI.Texture.fromImage('assets/white_32.png');
+        var texture = Pixi.Texture.fromImage('assets/white_32.png');
         
-        this.mouse = renderer.plugins.interaction.mouse ? renderer.plugins.interaction.mouse.global : null;
+        this.mouse = pixiRenderer.plugins.interaction.mouse ? pixiRenderer.plugins.interaction.mouse.global : null;
         
         var minSize = Math.min(window.innerHeight,window.innerWidth);
         
@@ -21,7 +21,7 @@ function(PIXI)
         {
             for(var x=0; x<=window.innerWidth; x+=size)
             {
-                var sprite = new PIXI.Sprite(texture);        
+                var sprite = new Pixi.Sprite(texture);
                 sprite.pivot.set(size/2,size/2);
                 
                 sprite.position.x = x + size/4;
@@ -34,9 +34,27 @@ function(PIXI)
                 this.container.addChild(sprite);
             }
         }
-        
+
+        this.initThree(threeScene, threeCamera);
+
     };
-    
+
+    Game.prototype.initThree = function(threeScene, threeCamera)
+    {
+        var geometry = new Three.BoxGeometry( 1, 1, 1 );
+        var material = new Three.MeshLambertMaterial( { color: 0x00ff00 } );
+        this.cube = new Three.Mesh( geometry, material );
+        threeScene.add( this.cube );
+        threeCamera.position.z = 5;
+
+        var ambientLight = new Three.AmbientLight( 0x777777 );
+        threeScene.add( ambientLight );
+
+        var directionalLight = new Three.DirectionalLight( 0xffffff, 0.5 );
+        directionalLight.position.set( 3, 10, 0 );
+        threeScene.add( directionalLight );
+    };
+
     Game.prototype.update = function(delta)
     {
         this.totalElapsed += delta;
@@ -66,7 +84,11 @@ function(PIXI)
             if(Math.random()<0.008)
                 sprite.alpha = 0.9 + 0.1 * Math.random();
                 
-        }, this)
+        }, this);
+
+        this.cube.rotateX(1*delta);
+        this.cube.rotateY(1*delta);
+        //this.cube.rotateOnAxis(new Three.Vector3(0.2,0.2,0.2), 10*delta);
     };
     
     Game.prototype.render = function()

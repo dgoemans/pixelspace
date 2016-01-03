@@ -1,21 +1,33 @@
 requirejs.config({
     baseUrl: 'js',
     paths: {
-        pixi: '../bower_components/pixi/bin/pixi'
+        Pixi: '../bower_components/pixi/bin/pixi',
+        Three: '../bower_components/three.js/build/three'
+    },
+    shim: {
+        Three: {
+            exports: "THREE"
+        }
     }
 });
 
 navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate || function(){};
 
 require(["game/Game", 
-    "pixi"], 
-function(Game, PIXI) {
-    var root = new PIXI.Container(0x6699FF);
+    "Pixi",
+    "Three"],
+function(Game, Pixi, Three) {
+    var root = new Pixi.Container(0x6699FF);
 
-    var pixiRenderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight);
-    document.body.appendChild(pixiRenderer.view);
+    var pixiRenderer = Pixi.autoDetectRenderer(window.innerWidth, window.innerHeight, {view: document.getElementById('pixiCanvas')});
 
-    var game = new Game(root, pixiRenderer);
+    var threeScene = new Three.Scene();
+    var threeCamera = new Three.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    var threeRenderer = new Three.WebGLRenderer({canvas: document.getElementById('threeCanvas'), alpha: true});
+    threeRenderer.setSize( window.innerWidth, window.innerHeight );
+    threeRenderer.setClearColor( 0xffffff, 0.0 );
+
+    var game = new Game(root, pixiRenderer, threeScene, threeCamera);
 
     var lastTime = Date.now();
 
@@ -37,6 +49,9 @@ function(Game, PIXI) {
 
         // render the stage
         pixiRenderer.render(root);
+
+        threeRenderer.clear();
+        threeRenderer.render( threeScene, threeCamera );
 
         lastTime = now;
     }
