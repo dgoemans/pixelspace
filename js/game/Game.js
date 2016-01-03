@@ -8,7 +8,7 @@ function(PIXI)
         root.addChild(this.container);
         
         this.sprites = [];
-        var texture = PIXI.Texture.fromImage('/assets/white_32.png');
+        var texture = PIXI.Texture.fromImage('assets/white_32.png');
         
         this.mouse = renderer.plugins.interaction.mouse ? renderer.plugins.interaction.mouse.global : null;
         
